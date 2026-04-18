@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Task Manager</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="script.js" defer></script>
+    </head>
+    <body>
+        <div class="app-container">
+            <div class="card">
+                <h1>Task Manager</h1>
+
+                <form class="task-form" id="task-form">
+                    <div class="left">
+                        <input type="text" placeholder="Title" id="title" />
+                        <input
+                            type="text"
+                            placeholder="Description"
+                            id="description"
+                        />
+                    </div>
+                    <div class="right">
+                        <input type="date" id="dueDate" />
+                    </div>
+                    <button type="submit" id="task-btn">Add Task</button>
+                </form>
+                <p id="error-text"></p>
+
+                <div id="tasks-container" class="tasks-container"></div>
+            </div>
+        </div>
+    </body>
+</html>

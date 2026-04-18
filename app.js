@@ -14,9 +14,7 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("Hola mundo");
-});
+app.use(express.static("public"));
 
 app.use("/tasks", tasksRoutes);
 
