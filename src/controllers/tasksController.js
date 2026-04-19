@@ -8,45 +8,107 @@ const getTasks = async (req, res) => {
     const result = await pool.query(
       "SELECT * FROM tasks ORDER BY due_date IS NULL, due_date ASC;",
     );
-    res.json(result.rows);
+    return res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Database error" });
+    return res.status(500).json({ error: "Database error" });
   }
 };
 
 // POST /tasks
 const createTask = async (req, res) => {
-  const { title, description, completed, dueDate } = req.body;
+  let { title, description = "", completed = false, dueDate = null } = req.body;
 
-  if (!title) {
-    return res.status(400).json({ error: "Title is required" });
+  if (typeof title !== "string" || title.trim() === "") {
+    return res
+      .status(400)
+      .json({ error: "Title is required and must be a non-empty string." });
   }
 
-  const safeDueDate = dueDate === "" ? null : dueDate;
+  if (typeof description !== "string") {
+    return res.status(400).json({ error: "Description must be a string." });
+  }
+
+  if (typeof completed !== "boolean") {
+    return res.status(400).json({ error: "Completed must be a boolean." });
+  }
+
+  if (dueDate === "") {
+    dueDate = null;
+  }
+
+  if (dueDate !== null) {
+    const parsedDate = Date.parse(dueDate);
+
+    if (isNaN(parsedDate)) {
+      return res.status(400).json({ error: "Due date must be a valid date." });
+    }
+
+    dueDate = new Date(parsedDate).toISOString();
+  }
 
   try {
     const result = await pool.query(
       `INSERT INTO tasks (title, description, completed, due_date)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [title, description ?? "", completed ?? false, safeDueDate],
+      [title.trim(), description.trim(), completed, dueDate],
     );
 
-    res.json(result.rows[0]);
+    return res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Database error" });
+
+    return res.status(500).json({ error: "Database error." });
   }
 };
 
 // PUT /tasks/:id
 const updateTask = async (req, res) => {
   const id = parseInt(req.params.id);
-  const { title, description, completed, dueDate } = req.body;
 
-  if (title !== undefined && title.trim() === "") {
-    return res.status(400).json({ error: "Title cannot be empty" });
+  let { title, description, completed, dueDate } = req.body;
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid task id." });
+  }
+
+  if (title !== undefined) {
+    if (typeof title !== "string" || title.trim() === "") {
+      return res
+        .status(400)
+        .json({ error: "Title must be a non-empty string." });
+    }
+    title = title.trim();
+  }
+
+  if (description !== undefined) {
+    if (typeof description !== "string") {
+      return res.status(400).json({ error: "Description must be a string." });
+    }
+    description = description.trim();
+  }
+
+  if (completed !== undefined) {
+    if (typeof completed !== "boolean") {
+      return res.status(400).json({ error: "Completed must be a boolean." });
+    }
+  }
+
+  if (dueDate !== undefined) {
+    if (dueDate === "" || dueDate === null) {
+      dueDate = null;
+    } else {
+      const parsedDate = Date.parse(dueDate);
+
+      if (isNaN(parsedDate)) {
+        return res
+          .status(400)
+          .json({ error: "Due date must be a valid date." });
+      }
+
+      dueDate = new Date(parsedDate).toISOString();
+    }
   }
 
   try {
@@ -62,19 +124,23 @@ const updateTask = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Task not found" });
+      return res.status(404).json({ error: "Task not found." });
     }
 
-    res.json(result.rows[0]);
+    return res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Database error" });
+    return res.status(500).json({ error: "Database error." });
   }
 };
 
 // DELETE /tasks/:id
 const deleteTask = async (req, res) => {
   const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid task id." });
+  }
 
   try {
     const result = await pool.query(
@@ -83,13 +149,16 @@ const deleteTask = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Task not found" });
+      return res.status(404).json({ error: "Task not found." });
     }
 
-    res.json(result.rows[0]);
+    return res.status(200).json({
+      message: "Task deleted successfully.",
+      task: result.rows[0],
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Database error" });
+    return res.status(500).json({ error: "Database error." });
   }
 };
 
