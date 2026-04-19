@@ -82,6 +82,11 @@ input[type="date"] {
     color: white;
     cursor: pointer;
 }
+
+.task-form button:hover {
+    background-color: rgb(28, 28, 28);
+}
+
 /* Lista de tareas */
 .tasks-container {
     display: flex;
@@ -137,4 +142,138 @@ input[type="date"] {
 .task-date {
     font-size: 14px;
     color: #999;
+}
+
+/* Overlay */
+
+.modal {
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.4);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+/* Oculto */
+
+.hidden {
+    display: none;
+}
+
+/* Caja del modal */
+
+.modal-content {
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    width: 420px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Título */
+
+.modal-content h2 {
+    margin: 0;
+
+    font-size: 24px;
+}
+
+/* Inputs */
+
+.modal-content input {
+    padding: 12px;
+
+    border-radius: 6px;
+
+    border: 1px solid #ddd;
+
+    font-size: 14px;
+}
+
+.modal-content input:focus {
+    outline: none;
+
+    border-color: black;
+}
+
+/* Botones */
+
+.modal-buttons {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 10px;
+}
+
+/* Botón base */
+
+.modal-buttons button {
+    padding: 10px 15px;
+
+    border-radius: 6px;
+
+    border: none;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: 0.2s;
+}
+
+/* Save */
+
+#save-btn {
+    background-color: black;
+
+    color: white;
+}
+
+#save-btn:hover {
+    background-color: #222;
+}
+
+/* Delete */
+
+#delete-btn {
+    background-color: #e74c3c;
+
+    color: white;
+}
+
+#delete-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Close */
+
+#close-btn {
+    background-color: #eee;
+}
+
+#close-btn:hover {
+    background-color: #ddd;
 }

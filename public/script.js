@@ -1,10 +1,25 @@
 const tasksContainer = document.getElementById("tasks-container");
+
+// New task form
 const newTask = document.getElementById("task-form");
 const taskTitle = document.getElementById("title");
 const taskDescription = document.getElementById("description");
 const taskDueDate = document.getElementById("dueDate");
 
+// Modal
+const modal = document.getElementById("modal");
+const modalTitle = document.getElementById("modal-title");
+const modalDescription = document.getElementById("modal-description");
+const modalDueDate = document.getElementById("modal-dueDate");
+const closeBtn = document.getElementById("close-btn");
+const saveBtn = document.getElementById("save-btn");
+const deleteBtn = document.getElementById("delete-btn");
+
+let currentTaskId = null;
+
+// Error text
 const error = document.getElementById("error-text");
+const modalError = document.getElementById("modal-error-text");
 
 const loadTasks = async () => {
   const response = await fetch("/tasks");
@@ -39,7 +54,6 @@ function renderTasks(tasks) {
       <div class="task-row">
         <div class="task-text">
           <h3 class="title">${tasks[i].title}</h3>
-          <p class="description">${tasks[i].description || "No description"}</p>
         </div>
         <div class="task-date">
           ${date}
@@ -50,15 +64,6 @@ function renderTasks(tasks) {
     tasksContainer.appendChild(card);
   }
 }
-
-loadTasks();
-
-document.addEventListener("click", (e) => {
-  const card = e.target.closest(".task-card");
-  if (!card) return;
-  const taskId = card.dataset.id;
-  console.log("Task clicked:", taskId);
-});
 
 newTask.addEventListener("submit", function (e) {
   e.preventDefault();
@@ -101,4 +106,78 @@ newTask.addEventListener("submit", function (e) {
     .catch((error) => {
       console.error("Error:", error);
     });
+});
+
+loadTasks();
+
+document.addEventListener("click", async (e) => {
+  const card = e.target.closest(".task-card");
+
+  if (!card) {
+    return;
+  }
+
+  const taskId = card.dataset.id;
+  currentTaskId = taskId;
+  const response = await fetch("/tasks");
+  const tasks = await response.json();
+  const task = tasks.find((t) => t.id == taskId);
+
+  modalError.textContent = "";
+  modalTitle.value = task.title;
+  modalDescription.value = task.description || "";
+  modalDueDate.value = task.due_date ? task.due_date.split("T")[0] : "";
+  modal.classList.remove("hidden");
+});
+
+closeBtn.addEventListener("click", () => {
+  modal.classList.add("hidden");
+});
+
+saveBtn.addEventListener("click", async () => {
+  modalError.textContent = "";
+  modalError.style.color = "red";
+
+  if (!modalTitle.value.trim()) {
+    modalError.textContent = "Title cannot be empty.";
+    return;
+  }
+
+  if (
+    modalDueDate.value &&
+    modalDueDate.value < new Date().toISOString().split("T")[0]
+  ) {
+    modalError.textContent = "Due date cannot be in the past.";
+    return;
+  }
+
+  const updatedTask = {
+    title: modalTitle.value,
+    description: modalDescription.value,
+    dueDate: modalDueDate.value || null,
+  };
+
+  await fetch(`/tasks/${currentTaskId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedTask),
+  });
+
+  modal.classList.add("hidden");
+  loadTasks();
+});
+
+deleteBtn.addEventListener("click", async () => {
+  const confirmed = confirm("Are you sure you want to delete this task?");
+
+  if (!confirmed) return;
+
+  await fetch(`/tasks/${currentTaskId}`, {
+    method: "DELETE",
+  });
+
+  modal.classList.add("hidden");
+  loadTasks();
 });

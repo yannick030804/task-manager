@@ -30,6 +30,24 @@
 
                 <div id="tasks-container" class="tasks-container"></div>
             </div>
+            <div id="modal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>Edit Task</h2>
+                    <input type="text" id="modal-title" placeholder="Title" />
+                    <input
+                        type="text"
+                        id="modal-description"
+                        placeholder="Description"
+                    />
+                    <input type="date" id="modal-dueDate" />
+                    <p id="modal-error-text"></p>
+                    <div class="modal-buttons">
+                        <button id="save-btn">Save</button>
+                        <button id="delete-btn">Delete</button>
+                        <button id="close-btn">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

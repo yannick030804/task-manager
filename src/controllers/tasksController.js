@@ -5,7 +5,9 @@ const pool = require("../db/pool");
 // GET /tasks
 const getTasks = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM tasks ORDER BY id");
+    const result = await pool.query(
+      "SELECT * FROM tasks ORDER BY due_date IS NULL, due_date ASC;",
+    );
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -21,12 +23,14 @@ const createTask = async (req, res) => {
     return res.status(400).json({ error: "Title is required" });
   }
 
+  const safeDueDate = dueDate === "" ? null : dueDate;
+
   try {
     const result = await pool.query(
       `INSERT INTO tasks (title, description, completed, due_date)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [title, description ?? "", completed ?? false, dueDate ?? null],
+      [title, description ?? "", completed ?? false, safeDueDate],
     );
 
     res.json(result.rows[0]);
