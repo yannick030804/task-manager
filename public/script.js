@@ -1,3 +1,4 @@
+let tasksData = [];
 const tasksContainer = document.getElementById("tasks-container");
 
 // New task form
@@ -11,6 +12,7 @@ const modal = document.getElementById("modal");
 const modalTitle = document.getElementById("modal-title");
 const modalDescription = document.getElementById("modal-description");
 const modalDueDate = document.getElementById("modal-dueDate");
+const modalCompleted = document.getElementById("modal-completed");
 const closeBtn = document.getElementById("close-btn");
 const saveBtn = document.getElementById("save-btn");
 const deleteBtn = document.getElementById("delete-btn");
@@ -27,6 +29,7 @@ const loadTasks = async () => {
 
   console.log(tasks);
 
+  tasksData = tasks;
   renderTasks(tasks);
 };
 
@@ -50,6 +53,12 @@ function renderTasks(tasks) {
       ? new Date(tasks[i].due_date).toLocaleDateString()
       : "-";
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const taskDate = new Date(tasks[i].due_date);
+    const isOverdue =
+      tasks[i].due_date && taskDate < today && !tasks[i].completed;
+
     card.innerHTML = `
       <div class="task-row">
         <div class="task-text">
@@ -60,6 +69,12 @@ function renderTasks(tasks) {
         </div>
       </div>
     `;
+
+    if (tasks[i].completed) {
+      card.classList.add("completed");
+    } else if (isOverdue) {
+      card.classList.add("overdue");
+    }
 
     tasksContainer.appendChild(card);
   }
@@ -119,14 +134,13 @@ document.addEventListener("click", async (e) => {
 
   const taskId = card.dataset.id;
   currentTaskId = taskId;
-  const response = await fetch("/tasks");
-  const tasks = await response.json();
-  const task = tasks.find((t) => t.id == taskId);
+  const task = tasksData.find((t) => t.id == taskId);
 
   modalError.textContent = "";
   modalTitle.value = task.title;
   modalDescription.value = task.description || "";
   modalDueDate.value = task.due_date ? task.due_date.split("T")[0] : "";
+  modalCompleted.checked = task.completed;
   modal.classList.remove("hidden");
 });
 
@@ -155,6 +169,7 @@ saveBtn.addEventListener("click", async () => {
     title: modalTitle.value,
     description: modalDescription.value,
     dueDate: modalDueDate.value || null,
+    completed: modalCompleted.checked,
   };
 
   await fetch(`/tasks/${currentTaskId}`, {

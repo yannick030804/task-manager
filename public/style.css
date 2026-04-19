@@ -103,6 +103,7 @@ input[type="date"] {
     padding: 15px;
     border-radius: 8px;
     border: 1px solid #eee;
+    cursor: pointer;
 }
 
 .task-card:hover {
@@ -276,4 +277,39 @@ input[type="date"] {
 
 #close-btn:hover {
     background-color: #ddd;
+}
+
+.task-card.completed {
+    background-color: #e8f5e9;
+    border: 1px solid #4caf50;
+}
+
+.task-card.completed .title {
+    color: #2e7d32;
+    text-decoration: line-through;
+}
+
+.task-card.completed .task-date {
+    color: #2e7d32;
+}
+
+.task-card.overdue {
+    border: 1px solid #e74c3c;
+    background-color: #fff5f5;
+}
+
+.task-card.overdue .title {
+    color: #c62828;
+}
+
+.task-card.overdue .task-date {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.modal-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
 }
