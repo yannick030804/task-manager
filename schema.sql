@@ -1,10 +1,19 @@
 DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS users;
 
-CREATE TABLE IF NOT EXISTS tasks (
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL
+);
+
+CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     description TEXT,
     completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    due_date DATE
+    due_date DATE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
