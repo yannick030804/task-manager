@@ -25,9 +25,9 @@ app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   if (req.session.userId) {
-    res.redirect("/index.html");
+    res.redirect("/app/index.html");
   } else {
-    res.redirect("/login.html");
+    res.redirect("/auth/login.html");
   }
 });
 
