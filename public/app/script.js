@@ -23,6 +23,21 @@ let currentTaskId = null;
 const error = document.getElementById("error-text");
 const modalError = document.getElementById("modal-error-text");
 
+async function checkAuth() {
+  try {
+    const res = await fetch("/auth/me");
+
+    if (!res.ok) {
+      window.location.href = "/login.html";
+      return;
+    }
+  } catch (err) {
+    window.location.href = "/login.html";
+  }
+}
+
+checkAuth();
+
 const loadTasks = async () => {
   const response = await fetch("/tasks");
   const tasks = await response.json();
