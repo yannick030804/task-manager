@@ -23,9 +23,9 @@ app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   if (req.session.userId) {
-    res.redirect("/app/index.html");
+    res.redirect("/index.html");
   } else {
-    res.redirect("/auth/login.html");
+    res.redirect("/login.html");
   }
 });
 
@@ -40,6 +40,8 @@ pool.query("SELECT NOW()", (err, res) => {
 app.use("/tasks", tasksRoutes);
 app.use("/auth", authRoutes);
 
-app.listen(3000, () => {
-  console.log("Server working on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server working on port ${PORT}`);
 });
