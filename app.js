@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const session = require("express-session");
 
@@ -11,7 +13,7 @@ app.use(express.json());
 
 app.use(
   session({
-    secret: "task-manager-secret-2026",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   }),
