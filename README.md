@@ -7,9 +7,7 @@ This project allows users to register, log in, and manage their own tasks with f
 
 ## Live Demo
 
-```
-https://task-manager-backend-aai6.onrender.com/auth/login.html
-```
+[Live Demo](https://task-manager-backend-aai6.onrender.com/auth/login.html)
 
 ---
 
@@ -84,6 +82,8 @@ task-manager/
 └── package.json
 ```
 
+---
+
 ## Database Schema
 
 The database is defined in `schema.sql`.
@@ -120,11 +120,22 @@ npm install express pg bcrypt express-session
 ## Database Setup
 
 1. Create a PostgreSQL database  
-2. Run the schema:
+
+2. Run the schema locally:
 
 ```bash
 psql -U your_user -d your_database -f schema.sql
 ```
+
+### Using a remote database (e.g. Render)
+
+If you are using a hosted PostgreSQL database, you can initialize it using:
+
+```bash
+psql "YOUR_DATABASE_URL" -f schema.sql
+```
+
+> Note: Free-tier databases (like Render) may expire. In that case, create a new database, update the `DATABASE_URL`, and run this command again.
 
 ---
 
