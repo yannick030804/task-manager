@@ -6,19 +6,31 @@ const pool = require("../db/pool");
 const getTasks = async (req, res) => {
   try {
     const userId = req.session.userId;
+    const filter = req.query.filter;
 
     if (!userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
-    const result = await pool.query(
-      "SELECT * FROM tasks WHERE user_id = $1 ORDER BY due_date IS NULL, due_date ASC;",
+    let query = "SELECT * FROM tasks WHERE user_id = $1";
+    let values = [userId];
 
-      [userId],
-    );
+    if (filter === "completed") {
+      query += " AND completed = true";
+    } else if (filter === "pending") {
+      query += " AND completed = false";
+    } else if (filter === "overdue") {
+      query += " AND completed = false AND due_date < CURRENT_DATE";
+    }
+
+    query += " ORDER BY due_date IS NULL, due_date ASC";
+
+    const result = await pool.query(query, values);
+
     return res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
+
     return res.status(500).json({ error: "Database error" });
   }
 };

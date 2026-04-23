@@ -1,5 +1,6 @@
 let tasksData = [];
 const tasksContainer = document.getElementById("tasks-container");
+const filterSelect = document.getElementById("filter");
 
 // New task form
 const newTask = document.getElementById("task-form");
@@ -55,23 +56,31 @@ async function loadUser() {
 loadUser();
 
 const loadTasks = async () => {
-  const response = await fetch("/tasks");
-  const tasks = await response.json();
+  let url = "/tasks";
 
-  console.log(tasks);
+  const filter = filterSelect.value;
+
+  if (filter !== "all") {
+    url += `?filter=${filter}`;
+  }
+
+  const response = await fetch(url);
+  const tasks = await response.json();
 
   tasksData = tasks;
   renderTasks(tasks);
 };
 
+filterSelect.addEventListener("change", loadTasks);
+
 function renderTasks(tasks) {
   tasksContainer.innerHTML = "";
 
-  if (tasks.length === 0) {
-    const text = document.createElement("h3");
-    text.id = "error-text";
-    text.textContent = "There are no tasks";
-    tasksContainer.appendChild(text);
+  if (!tasks || tasks.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "No tasks found";
+    tasksContainer.appendChild(empty);
     return;
   }
 
