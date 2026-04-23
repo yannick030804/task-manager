@@ -1,0 +1,308 @@
+/* ===== Base ===== */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f6f8;
+}
+
+.app-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: min(980px, 100%);
+    max-height: 86vh;
+    padding: 24px;
+    border-radius: 14px;
+    background-color: #fff;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Header ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+h1 {
+    margin: 0;
+    color: #111;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-section span {
+    color: #555;
+    font-weight: 500;
+}
+
+#logout-btn {
+    padding: 7px 12px;
+    border: 1px solid #d7d7d7;
+    border-radius: 5px;
+    background-color: #ececec;
+    color: #222;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+#logout-btn:hover {
+    background-color: #e3e3e3;
+}
+
+/* ===== Formulario principal ===== */
+.task-form {
+    display: grid;
+    grid-template-columns: 1fr 172px;
+    gap: 10px 14px;
+    margin-bottom: 12px;
+}
+
+.left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.right {
+    display: flex;
+    align-items: flex-start;
+}
+
+.task-form input {
+    width: 100%;
+    height: 34px;
+    padding: 6px 10px;
+    border: 1px solid #cdcdcd;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #1b1b1b;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.task-form input:focus {
+    border-color: #222;
+    outline: none;
+    background-color: #fff;
+}
+
+#dueDate {
+    min-width: 0;
+}
+
+.task-form button {
+    grid-column: 1 / -1;
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid #0d0d0d;
+    border-radius: 4px;
+    background-color: #000;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.task-form button:hover {
+    background-color: #111;
+}
+
+#error-text {
+    margin: 12px 0 18px;
+    color: #111;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* ===== Lista de tareas ===== */
+.tasks-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+}
+
+.task-card {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #fafafa;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.task-card:hover {
+    background-color: #f5f5f5;
+    transform: translateY(-2px);
+}
+
+.task-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.task-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    margin: 0;
+    font-weight: bold;
+}
+
+.description {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 14px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.task-date {
+    color: #999;
+    font-size: 14px;
+}
+
+.task-card.completed {
+    border: 1px solid #4caf50;
+    background-color: #e8f5e9;
+}
+
+.task-card.completed .title {
+    color: #2e7d32;
+    text-decoration: line-through;
+}
+
+.task-card.completed .task-date {
+    color: #2e7d32;
+}
+
+.task-card.overdue {
+    border: 1px solid #e74c3c;
+    background-color: #fff5f5;
+}
+
+.task-card.overdue .title {
+    color: #c62828;
+}
+
+.task-card.overdue .task-date {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* ===== Modal ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.hidden {
+    display: none;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 420px;
+    padding: 30px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.modal-content h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.modal-content input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.modal-content input:focus {
+    border-color: black;
+    outline: none;
+}
+
+.modal-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+#save-btn {
+    background-color: black;
+    color: white;
+}
+
+#save-btn:hover {
+    background-color: #222;
+}
+
+#delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+#delete-btn:hover {
+    background-color: #c0392b;
+}
+
+#close-btn {
+    background-color: #eee;
+}
+
+#close-btn:hover {
+    background-color: #ddd;
+}

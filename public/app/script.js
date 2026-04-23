@@ -38,6 +38,22 @@ async function checkAuth() {
 
 checkAuth();
 
+async function loadUser() {
+  const res = await fetch("/auth/me");
+
+  if (!res.ok) {
+    window.location.href = "/login.html";
+
+    return;
+  }
+
+  const user = await res.json();
+
+  document.getElementById("username").textContent = user.username;
+}
+
+loadUser();
+
 const loadTasks = async () => {
   const response = await fetch("/tasks");
   const tasks = await response.json();
