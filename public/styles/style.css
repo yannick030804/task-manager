@@ -25,6 +25,25 @@ body {
 }
 
 /* Título */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logout-btn {
+    background-color: #eee;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background-color: #ddd;
+}
+
 h1 {
     text-align: center;
     margin-bottom: 20px;

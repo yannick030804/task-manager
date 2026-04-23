@@ -196,3 +196,11 @@ deleteBtn.addEventListener("click", async () => {
   modal.classList.add("hidden");
   loadTasks();
 });
+
+const logoutBtn = document.getElementById("logout-btn");
+
+logoutBtn.addEventListener("click", async () => {
+  await fetch("/auth/logout", { method: "POST" });
+
+  window.location.href = "/auth/login.html";
+});

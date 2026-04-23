@@ -19,6 +19,14 @@ app.use(
 
 app.use(express.static("public"));
 
+app.get("/", (req, res) => {
+  if (req.session.userId) {
+    res.redirect("/app/index.html");
+  } else {
+    res.redirect("/auth/login.html");
+  }
+});
+
 pool.query("SELECT NOW()", (err, res) => {
   if (err) {
     console.error("Error connecting to DB", err);

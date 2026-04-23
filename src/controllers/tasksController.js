@@ -5,8 +5,16 @@ const pool = require("../db/pool");
 // GET /tasks
 const getTasks = async (req, res) => {
   try {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
     const result = await pool.query(
-      "SELECT * FROM tasks ORDER BY due_date IS NULL, due_date ASC;",
+      "SELECT * FROM tasks WHERE user_id = $1 ORDER BY due_date IS NULL, due_date ASC;",
+
+      [userId],
     );
     return res.status(200).json(result.rows);
   } catch (err) {
@@ -18,6 +26,12 @@ const getTasks = async (req, res) => {
 // POST /tasks
 const createTask = async (req, res) => {
   let { title, description = "", completed = false, dueDate = null } = req.body;
+
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Not authenticated" });
+  }
 
   if (typeof title !== "string" || title.trim() === "") {
     return res
@@ -49,10 +63,9 @@ const createTask = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `INSERT INTO tasks (title, description, completed, due_date)
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [title.trim(), description.trim(), completed, dueDate],
+      `INSERT INTO tasks (title, description, completed, due_date, user_id)
+      VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [title.trim(), description.trim(), completed, dueDate, userId],
     );
 
     return res.status(201).json(result.rows[0]);
@@ -66,6 +79,11 @@ const createTask = async (req, res) => {
 // PUT /tasks/:id
 const updateTask = async (req, res) => {
   const id = parseInt(req.params.id);
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Not authenticated" });
+  }
 
   let { title, description, completed, dueDate } = req.body;
 
@@ -118,9 +136,9 @@ const updateTask = async (req, res) => {
            description = COALESCE($2, description),
            completed = COALESCE($3, completed),
            due_date = COALESCE($4, due_date)
-       WHERE id = $5
-       RETURNING *`,
-      [title, description, completed, dueDate, id],
+           WHERE id = $5 AND user_id = $6
+           RETURNING *`,
+      [title, description, completed, dueDate, id, userId],
     );
 
     if (result.rows.length === 0) {
@@ -137,6 +155,11 @@ const updateTask = async (req, res) => {
 // DELETE /tasks/:id
 const deleteTask = async (req, res) => {
   const id = parseInt(req.params.id);
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Not authenticated" });
+  }
 
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid task id." });
@@ -144,8 +167,8 @@ const deleteTask = async (req, res) => {
 
   try {
     const result = await pool.query(
-      "DELETE FROM tasks WHERE id = $1 RETURNING *",
-      [id],
+      "DELETE FROM tasks WHERE id = $1 AND user_id = $2 RETURNING *",
+      [id, userId],
     );
 
     if (result.rows.length === 0) {
