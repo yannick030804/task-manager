@@ -5,6 +5,14 @@ This project allows users to register, log in, and manage their own tasks with f
 
 ---
 
+## Live Demo
+
+```
+https://task-manager-backend-aai6.onrender.com/auth/login.html
+```
+
+---
+
 ## Features
 
 - User registration and login (session-based authentication)
@@ -45,14 +53,19 @@ This project allows users to register, log in, and manage their own tasks with f
 task-manager/
 │
 ├── public/
-│   ├── index.html
-│   ├── login.html
-│   ├── register.html
-│   ├── script.js
-│   ├── auth.js
+│   ├── app/
+│   │   ├── index.html
+│   │   └── script.js
+│   │
+│   ├── auth/
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   └── auth.js
+│   │
 │   └── styles/
 │       ├── styleIndex.css
-│       └── style.css
+│       ├── styleLogin.css
+│       └── styleRegister.css
 │
 ├── src/
 │   ├── controllers/
@@ -124,7 +137,7 @@ node app.js
 Open in browser:
 
 ```
-http://localhost:3000/login.html
+http://localhost:3000/auth/login.html
 ```
 
 ---
@@ -179,17 +192,7 @@ Filtering:
 - Implementing authentication  
 - Working with PostgreSQL  
 - Structuring backend projects  
-- Connecting frontend and backend  
-
----
-
-## What I Learned
-
-- Designing REST APIs  
-- Implementing authentication  
-- Working with PostgreSQL  
-- Structuring backend projects  
-- Connecting frontend and backend  
+- Connecting frontend and backend   
 
 ---
 
