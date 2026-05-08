@@ -5,6 +5,10 @@ body {
     background-color: #f5f6f8;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 .app-container {
     display: flex;
     justify-content: center;
@@ -166,11 +170,13 @@ h1 {
 .task-text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .title {
     margin: 0;
     font-weight: bold;
+    overflow-wrap: break-word;
 }
 
 .description {
@@ -184,6 +190,8 @@ h1 {
 .task-date {
     color: #999;
     font-size: 14px;
+    flex-shrink: 0;
+    padding-left: 12px;
 }
 
 .task-card.completed {
@@ -336,4 +344,144 @@ h1 {
     padding: 30px;
     color: #777;
     font-size: 16px;
+}
+
+@media (max-width: 900px) {
+    .app-container {
+        align-items: stretch;
+        padding: 18px;
+    }
+
+    .card {
+        max-height: none;
+        min-height: calc(100vh - 36px);
+    }
+}
+
+@media (max-width: 720px) {
+    .card {
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .user-section {
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    h1 {
+        font-size: 34px;
+    }
+
+    .task-form {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .right {
+        width: 100%;
+    }
+
+    #dueDate {
+        width: 100%;
+    }
+
+    .filters {
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .filters select {
+        min-width: 140px;
+    }
+
+    .modal {
+        padding: 16px;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: 420px;
+        padding: 24px 20px;
+    }
+}
+
+@media (max-width: 520px) {
+    .app-container {
+        padding: 0;
+    }
+
+    .card {
+        width: 100%;
+        min-height: 100vh;
+        padding: 18px 14px 20px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .user-section {
+        gap: 10px;
+    }
+
+    .user-section span {
+        max-width: 100%;
+        overflow-wrap: break-word;
+    }
+
+    #logout-btn,
+    .task-form button,
+    .modal-buttons button,
+    .filters select,
+    .task-form input,
+    .modal-content input {
+        min-height: 44px;
+    }
+
+    .task-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .task-date {
+        padding-left: 0;
+        font-size: 13px;
+    }
+
+    .filters {
+        align-items: stretch;
+    }
+
+    .filters label {
+        width: 100%;
+    }
+
+    .filters select {
+        width: 100%;
+    }
+
+    .modal {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: none;
+        padding: 20px 16px 24px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+    }
 }
