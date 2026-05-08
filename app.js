@@ -6,6 +6,7 @@ const express = require("express");
 const session = require("express-session");
 
 const app = express();
+const isProduction = process.env.NODE_ENV === "production";
 
 const pool = require("./src/db/pool");
 const tasksRoutes = require("./src/routes/tasksRoutes");
@@ -13,15 +14,35 @@ const authRoutes = require("./src/routes/authRoutes");
 
 app.use(express.json());
 
+if (isProduction) {
+  app.set("trust proxy", 1);
+}
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: isProduction,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
   }),
 );
 
-app.use(express.static("public"));
+const requireAuth = (req, res, next) => {
+  if (!req.session.userId) {
+    return res.redirect("/auth/login.html");
+  }
+
+  next();
+};
+
+app.use("/styles", express.static("public/styles"));
+app.use("/auth", express.static("public/auth"));
+app.use("/app", requireAuth, express.static("public/app"));
 
 app.get("/", (req, res) => {
   if (req.session.userId) {

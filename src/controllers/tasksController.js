@@ -142,15 +142,41 @@ const updateTask = async (req, res) => {
   }
 
   try {
+    const updates = [];
+    const values = [];
+
+    if (title !== undefined) {
+      values.push(title);
+      updates.push(`title = $${values.length}`);
+    }
+
+    if (description !== undefined) {
+      values.push(description);
+      updates.push(`description = $${values.length}`);
+    }
+
+    if (completed !== undefined) {
+      values.push(completed);
+      updates.push(`completed = $${values.length}`);
+    }
+
+    if (dueDate !== undefined) {
+      values.push(dueDate);
+      updates.push(`due_date = $${values.length}`);
+    }
+
+    if (updates.length === 0) {
+      return res.status(400).json({ error: "No valid fields to update." });
+    }
+
+    values.push(id, userId);
+
     const result = await pool.query(
       `UPDATE tasks
-       SET title = COALESCE($1, title),
-           description = COALESCE($2, description),
-           completed = COALESCE($3, completed),
-           due_date = COALESCE($4, due_date)
-           WHERE id = $5 AND user_id = $6
+       SET ${updates.join(", ")}
+           WHERE id = $${values.length - 1} AND user_id = $${values.length}
            RETURNING *`,
-      [title, description, completed, dueDate, id, userId],
+      values,
     );
 
     if (result.rows.length === 0) {

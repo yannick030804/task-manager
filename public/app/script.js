@@ -24,16 +24,33 @@ let currentTaskId = null;
 const error = document.getElementById("error-text");
 const modalError = document.getElementById("modal-error-text");
 
+function redirectToLogin() {
+  window.location.href = "/auth/login.html";
+}
+
+async function parseResponse(response) {
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = data?.error || "Something went wrong.";
+    const err = new Error(message);
+    err.status = response.status;
+    throw err;
+  }
+
+  return data;
+}
+
 async function checkAuth() {
   try {
     const res = await fetch("/auth/me");
 
     if (!res.ok) {
-      window.location.href = "/login.html";
+      redirectToLogin();
       return;
     }
   } catch (err) {
-    window.location.href = "/login.html";
+    redirectToLogin();
   }
 }
 
@@ -43,7 +60,7 @@ async function loadUser() {
   const res = await fetch("/auth/me");
 
   if (!res.ok) {
-    window.location.href = "/login.html";
+    redirectToLogin();
 
     return;
   }
@@ -56,19 +73,29 @@ async function loadUser() {
 loadUser();
 
 const loadTasks = async () => {
-  let url = "/tasks";
+  try {
+    let url = "/tasks";
 
-  const filter = filterSelect.value;
+    const filter = filterSelect.value;
 
-  if (filter !== "all") {
-    url += `?filter=${filter}`;
+    if (filter !== "all") {
+      url += `?filter=${filter}`;
+    }
+
+    const response = await fetch(url);
+    const tasks = await parseResponse(response);
+
+    tasksData = tasks;
+    renderTasks(tasks);
+  } catch (err) {
+    if (err.status === 401) {
+      redirectToLogin();
+      return;
+    }
+
+    error.style.color = "red";
+    error.textContent = err.message;
   }
-
-  const response = await fetch(url);
-  const tasks = await response.json();
-
-  tasksData = tasks;
-  renderTasks(tasks);
 };
 
 filterSelect.addEventListener("change", loadTasks);
@@ -153,13 +180,20 @@ newTask.addEventListener("submit", function (e) {
     },
     body: JSON.stringify(task),
   })
-    .then((response) => response.json())
-    .then((data) => {
+    .then(parseResponse)
+    .then(() => {
       newTask.reset();
+      error.textContent = "";
       loadTasks();
     })
-    .catch((error) => {
-      console.error("Error:", error);
+    .catch((err) => {
+      if (err.status === 401) {
+        redirectToLogin();
+        return;
+      }
+
+      error.style.color = "red";
+      error.textContent = err.message;
     });
 });
 
@@ -212,16 +246,26 @@ saveBtn.addEventListener("click", async () => {
     completed: modalCompleted.checked,
   };
 
-  await fetch(`/tasks/${currentTaskId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(updatedTask),
-  });
+  try {
+    const response = await fetch(`/tasks/${currentTaskId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedTask),
+    });
 
-  modal.classList.add("hidden");
-  loadTasks();
+    await parseResponse(response);
+    modal.classList.add("hidden");
+    loadTasks();
+  } catch (err) {
+    if (err.status === 401) {
+      redirectToLogin();
+      return;
+    }
+
+    modalError.textContent = err.message;
+  }
 });
 
 deleteBtn.addEventListener("click", async () => {
@@ -229,12 +273,22 @@ deleteBtn.addEventListener("click", async () => {
 
   if (!confirmed) return;
 
-  await fetch(`/tasks/${currentTaskId}`, {
-    method: "DELETE",
-  });
+  try {
+    const response = await fetch(`/tasks/${currentTaskId}`, {
+      method: "DELETE",
+    });
 
-  modal.classList.add("hidden");
-  loadTasks();
+    await parseResponse(response);
+    modal.classList.add("hidden");
+    loadTasks();
+  } catch (err) {
+    if (err.status === 401) {
+      redirectToLogin();
+      return;
+    }
+
+    modalError.textContent = err.message;
+  }
 });
 
 const logoutBtn = document.getElementById("logout-btn");
